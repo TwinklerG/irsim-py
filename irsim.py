@@ -585,32 +585,19 @@ class IRSimCli:
         else:
             error_code = 3
         if error_code == 1:
-            # QMessageBox.information(
-            #     self,
-            #     "Finish",
-            #     "Program has exited gracefully.\nTotal instructions = %d"
-            #     % self.instrCnt,
-            # )
             print(
                 "Program has exited gracefully.\nTotal instructions = %d"
                 % self.instrCnt
             )
-            # self.updateStatus("Simulation OK. Instruction count = %d" % self.instrCnt)
         elif error_code == 2:
-            QMessageBox.critical(
-                self,
-                "Error",
+            print(
                 "An error occurred at line %d: Illegal memory access. \nIf this message keeps popping out, please reload the source file"
-                % (self.ip + 1),
+                % (self.ip + 1)
             )
-            self.updateStatus("Simulation failed: Memory access out of bound.")
         elif error_code == 3:
-            QMessageBox.warning(
-                self,
-                "Warning",
-                "Program Counter goes out of bound. The running program will be terminated instantly.",
+            print(
+                "Program Counter goes out of bound. The running program will be terminated instantly."
             )
-            self.updateStatus("Simulation failed: PC error.")
         self.displayFunction.append("main")
         self.ip = -1
 
@@ -630,23 +617,12 @@ class IRSimCli:
         self.instrCnt += 1
         try:
             if code[0] == "READ":
-                # result, ok = QInputDialog.getInt(
-                #     self,
-                #     "IR Simulator - Read",
-                #     "Please enter an integral value for %s" % code[1],
-                #     0,
-                # )
                 try:
-                    result = int(
-                        input(
-                            "Please enter an integral value for %s: " % code[1]
-                        ).strip()
-                    )
+                    result = int(input().strip())
                     self.mem[self.symTable[code[1]][0] // 4] = result
                 except Exception:
                     raise "Please enter an integral value"
             elif code[0] == "WRITE":
-                # self.console.append(str(self.getValue(code[1])))
                 print(self.getValue(code[1]))
             elif code[0] == "GOTO":
                 self.ip = self.labelTable[code[1]]
@@ -775,31 +751,12 @@ class IRSimCli:
                     else:
                         raise IRSyntaxError
         except (IRSyntaxError, ValueError):
-            # QMessageBox.critical(
-            #     self, "Error", "Syntax error at line %d:\n\n%s" % (lineno + 1, code)
-            # )
             raise "Syntax error at line %d:\n\n%s" % (lineno + 1, code)
         except DuplicatedLabelError:
-            # QMessageBox.critical(
-            #     self,
-            #     "Error",
-            #     "Duplicated label %s at line %d:\n\n%s" % (strs[1], lineno + 1, code),
-            # )
             raise "Duplicated label %s at line %d:\n\n%s" % (strs[1], lineno + 1, code)
         except DuplicatedVariableError:
-            # QMessageBox.critical(
-            #     self,
-            #     "Error",
-            #     "Duplicated variable %s at line %d:\n\n%s"
-            #     % (strs[1], lineno + 1, code),
-            # )
             raise "Duplicated variable %s at line %d:\n\n%s"
         except CurrentFunctionNoneError:
-            # QMessageBox.critical(
-            #     self,
-            #     "Error",
-            #     "Line %d does not belong to any function:\n\n%s" % (lineno + 1, code),
-            # )
             raise "Line %d does not belong to any function:\n\n%s" % (lineno + 1, code)
         return True
 
@@ -810,7 +767,6 @@ class IRSimCli:
             if line.isspace():
                 continue
             if self.sanity_check(line, lineno):
-                # self.codist.addItem(line.strip().replace("\t", " "))
                 pass
             else:
                 break
@@ -820,11 +776,6 @@ class IRSimCli:
             self.lineno = lineno
         fp.close()
         if self.entranceIP == -1:
-            # QMessageBox.critical(
-            #     self,
-            #     "Error",
-            #     "Cannot find program entrance. Please make sure the 'main' function does exist.",
-            # )
             raise "Cannot find program entrance. Please make sure the 'main' function does exist."
         if (
             self.filename is None
@@ -832,12 +783,10 @@ class IRSimCli:
             or self.offset > 1048576
             or (self.entranceIP == -1)
         ):
-            # self.updateStatus("Loading failed.")
             self.initialize()
             return
         self.mem = [0] * 262144
         self.displayFunction.append("main")
-        # self.updateStatus("File loaded successfully.")
         return None
 
     def tableInsert(self, var, size=4, array=False):
@@ -869,7 +818,7 @@ class IRSimCli:
 
 import argparse
 
-parser = argparse.ArgumentParser(prog="irsim-py")
+parser = argparse.ArgumentParser(prog="irsim")
 parser.add_argument("-i", "--input_file")
 
 args = parser.parse_args()
